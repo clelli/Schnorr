@@ -1,0 +1,140 @@
+\documentclass[11pt,a4paper,oneside,openright]{report}
+\usepackage[nottoc,notlot,notlof]{tocbibind}
+\usepackage[pdftex]{graphicx}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{afterpage}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[retainorgcmds]{IEEEtrantools}
+\usepackage{rotating}
+\usepackage{fancyhdr}
+\usepackage{filecontents}
+\usepackage{tikz}
+\usepackage{afterpage}
+\usepackage{pgfplots}
+\usepackage{xspace}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows,automata,chains,fit,shapes}
+\usepackage{enumitem}
+\usepackage{xcolor,colortbl}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage[pdfusetitle, colorlinks, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}  
+\usepackage[skins]{tcolorbox}
+\usepackage{makecell}
+\usepackage{setspace}
+\usepackage{newclude}
+\usepackage{lscape}
+
+\usepackage{parskip}
+\begingroup
+\makeatletter
+\@for\theoremstyle:=definition,remark,plain\do{%
+	\expandafter\g@addto@macro\csname th@\theoremstyle\endcsname{%
+		\addtolength\thm@preskip\parskip
+	}%
+}
+\endgroup
+
+
+%\setlength{\oddsidemargin} {2. cm}
+%\setlength{\evensidemargin} {2. cm}
+%\addtolength{\oddsidemargin} {-0.4 cm}
+%\addtolength{\evensidemargin} {-0.4 cm}
+
+\usepackage[italian,english]{babel}
+\usepackage[utf8]{inputenc}
+\renewcommand{\captionfont}{\normalfont \itshape \small}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+
+\pagestyle{empty}
+
+
+\newtheorem{teorema}{Definition}[chapter]
+\newtheorem{Teorema}{Theorem}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newcommand{\MATLAB}{\textsc{Matlab}\xspace}
+\pagestyle{empty}
+\setlength{\oddsidemargin} {2. cm}
+\setlength{\evensidemargin} {2. cm}
+\addtolength{\oddsidemargin} {-0.4 cm}
+\addtolength{\evensidemargin} {-0.4 cm}
+
+\renewcommand{\captionfont}{\normalfont \itshape \small}
+
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
+
+\begin{document}
+	\include{frontespizio}
+	\pagestyle{empty} \normalfont 
+	\include{dedica}
+
+	\afterpage{\blankpage}
+
+	\pagenumbering{Roman} \pagestyle{plain} 
+\tableofcontents
+
+	
+
+
+
+
+	
+	\listoffigures
+	\listoftables
+%	\listofalgorithms
+%	\include{sommario}
+	\include{abstract}
+	
+	\thispagestyle{plain} \cleardoublepage
+	\afterpage{\blankpage}
+	\renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter.\ #1}{}} 
+	\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}         
+	\fancyhead[LE,RO]{\bfseries\thepage}    
+	
+	\fancyhead[RE]{\bfseries\leftmark}    
+	\fancyhead[LO]{\bfseries\rightmark}     
+	\renewcommand{\headrulewidth}{0.3pt} 
+	
+	\pagenumbering{arabic}
+	\include{capitolo1}
+	\include{capitolo2}
+	\include{capitolo3}
+	\include{capitolo4}
+	\include{capitolo5}
+	\include{capitolo6}
+%	\include{capitolo7}
+
+	\bibliographystyle{plain}
+	\bibliography{biblio_nuova}
+		\include{ringraziamenti}	
+	\nocite{*}
+	
+%	
+%	\pagestyle{fancy} 
+%	\fancyfoot{}                                               
+%	\renewcommand{\chaptermark}[1]{\markboth{\appendixname\ \thechapter.\ #1}{}} 
+%	\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}         
+%	\fancyhead[LE,RO]{\bfseries\thepage}    
+%	
+%	\fancyhead[RE]{\bfseries\leftmark}    
+%	\fancyhead[LO]{\bfseries\rightmark}     
+%	\renewcommand{\headrulewidth}{0.3pt} 
+%	
+	
+\end{document}
+
+
+
+
+
