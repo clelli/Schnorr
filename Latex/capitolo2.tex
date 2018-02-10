@@ -6,10 +6,11 @@ In this chapter, we present some basic notion and definition necessary to deeply
 We start with the mathematical foundations, from Modular Arithmetic to Groups and Finite fields. Then we go through an accurate analysis of Elliptic Curve and Hash functions to, finally, comprehend digital signatures.
 
 \section{Mathematical Fundations}
-Number theory, or in older usage arithmetic, is a branch of pure mathematics devoted primarily to the study of the integers. It is sometimes called \textit{The Queen of Mathematics} because of its foundational place in the discipline.\\
-It has applications to cryptography and cryptanalysis, particularly with regard to modular arithmetic and diophantine equations.
+Gauss used to say "\textit{Mathematics is the queen of the sciences, and number theory is the queen of mathematics}" because of its importance in the discipline. Number theory, as it is defined in \textit{Encyclop\ae dia Britannica\cite{EnBrit}}, is a branch of pure mathematics concerned with the properties of the positive integers. \\
+It has applications to cryptography and cryptanalysis, particularly with regard to modular arithmetic and diophantine equations (i.e. \textit{elliptic curve}).
 \subsection{Modular Arithmetic}
-A familiar use of modular arithmetic is in the 12-hour clock, in which the day is divided into two 12-hour periods. If the time is 7:00 now, then 8 hours later it will be 3:00. Usual addition would suggest that the later time should be 7 + 8 = 15, but this is not the answer because clock time "wraps around" every 12 hours. Because the hour number starts over after it reaches 12, this is arithmetic modulo 12. 
+Modular Arithmetic can be informally called the "clock arithmetic". Indeed, the most familiar example of it is in the 12-hour clock, where the day is divided into two 12-hour periods. Here it is visible how numbers "wrap around" upon reaching the \textit{modulus} value, just like the hours of the day do in the clock.\\
+For example, if it is 7:00 AM now, then 8 hours later what time will it be? Typically we would say 7 + 8 = 15, but in this case we will say 3:00 PM, because clock time "wraps around" every 12 hours. Thus, clock time is an example of \textit{modulus} 12.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.75\textwidth]{clock.png}
@@ -285,10 +286,13 @@ Hence, if we know $h(x) = h(y)$, it is safe to assume that $x= y$.
 
 An important application of secure hashes is verification of message integrity. Determining whether any changes have been made to a message (or a file), for example, can be accomplished by comparing message digests calculated before, and after, transmission (or any other event).\\
 For this reason, most digital signature algorithms only confirm the authenticity of a hashed digest of the message to be "signed". Verifying the authenticity of a hashed digest of the message is considered proof that the message itself is authentic.
+
+
 \section{Elliptic Curve Cryptography}
-Elliptic-curve cryptography (ECC) is an approach to public-key cryptography based on the algebraic structure of elliptic curves over finite fields. ECC requires smaller keys compared to non-ECC cryptography (based on plain Galois fields) to provide equivalent security. The use of elliptic curves in cryptography was suggested independently by Neal Koblitz and Victor S. Miller in 1985. Elliptic curve cryptography algorithms entered wide use in 2004 to 2005.
+In 1985, Neal Koblitz and Victor S. Miller independently proposed to use of the elliptic curves in cryptography. This brought to the birth of Elliptic-curve cryptography (ECC) which is a type of public-key cryptography based on the difficulty of computing discrete logarithms in the group of points on an elliptic curve defined over a finite field. 
+
 \begin{teorema}{(\textbf{Public-key cryptography})}
-	Public key cryptography, or asymmetrical cryptography, is any cryptographic system that uses pairs of keys: public keys which may be disseminated widely, and private keys which are known only to the owner.
+	Public key cryptography, also known as asymmetric cryptography, is any cryptographic system that uses pairs of keys: \textit{public keys} which can be disclosed, and \textit{private keys} which must be known only by the owner.
 \end{teorema}
 
 \subsection{Key pair generation}

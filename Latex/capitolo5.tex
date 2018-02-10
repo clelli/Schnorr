@@ -156,13 +156,8 @@ The explanation lies in the  fact that ECDSA works with just the $x$-coordinate 
 \end{teorema}
 Operating with only one coordinate it is not possible to use this property, because:\\
 $P_{x}+G_{x}=Q_{x} \nRightarrow P+G=Q$.\\
-Looking at the left side, $Q_{x}$ could be the coordinate of an EC point, but it could also not be in the curve; we are not in a \textit{Cartesian plane}!\\
-Indeed, Schnorr signature supports multisignature, while it is not possible to implement such a scheme in DSA. So, using the former there would be a considerable save of space! (\textit{see figure \eqref{img:BlockchaiMusig}})\\
-Looking at the \textit{verification} process, in Schnorr is faster and more simple than in DSA.\\
-As we said in \textit{Chapter \eqref{capitolo3}}, SSA supports \textit{Batch Validation}, which is an amazing feature 
-DSA is malleable:\\
-if $(x_{K},s)$ is a valid signature of $h$, also $(x_{K},n-s)$, where $n$ is the $order$, is a valid signature adn everyone can use it.\\
-This cannot happen with SSA.\\
+Looking at the left side, $Q_{x}$ could be the coordinate of an EC point, but it could also not be in the curve: we are not in a \textit{Cartesian plane}!\\
+Indeed, Schnorr signature supports multisignature, while it is not possible to implement such a scheme in DSA. So, using the former there would be a considerable save of space! (\textit{see figure \eqref{img:BlockchainMusig}})\\
 Moreover, currently it is used the DER encoding, which adds 6 bytes in each signature, and it is composed by:
 \begin{itemize}
 	\item $0x30$ to indicate the a DER encoded signature follows
@@ -171,7 +166,11 @@ Moreover, currently it is used the DER encoding, which adds 6 bytes in each sign
 	\item 1 byte for length of $x_{K}$
 \end{itemize}
 This means that the length of the signatures can vary. In our scheme it is not used and the length is fixed.\\
-Furthermore, there is a \textit{security proof} for Schnorr, but not for DSA.
-
-
+Schnorr signature saves up not only space, but also time.
+Looking at the \textit{verification} process, indeed, in Schnorr is faster and simpler than in DSA. 
+In this contex, it is important to remind what we said in \textit{Chapter \eqref{capitolo3}}, which is that SSA supports \textit{Batch Validation}. It is an amazing feature, because it permits to verify at the same time a set of signatures all together.\\
+\\
+Furthermore, DSA has some others drawbacks, such as \textit{mellability}.\\
+So, for example, if $(x_{K},s)$ is a valid signature of $h$, also $(x_{K},n-s)$, where $n$ is the $order$, is a valid signature adn everyone can use it.\\
+This cannot happen with SSA.\\
 
