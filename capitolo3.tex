@@ -1,0 +1,247 @@
+\chapter{Schnorr Signature Algorithm}
+\label{capitolo3}
+\thispagestyle{empty}
+
+As we said in the introduction, Claus Peter Schnorr presented his idea in 1989, and he promptly patented it. Since the beginning of 2008, when the patent has expired, a lot of possible algorithms for the generation of Schnorr signature have been proposed, but still today there is no standard.\\
+In this chapter, we present the one we think performs better: Schnorr Signature Algorithm over an Elliptic Curve.\\
+First of all we illustrate the steps through which we can generate and verify this type of signature.
+Then, we continue analyzing each codeline in order to deeply understand why we choose this implementation out of the various proposed by different developers.
+Finally, we introduce the important benefits of this signature.
+
+
+
+\section{Scheme}
+Given an elliptic curve over a finite field $\mathbb{F} _{p}$, a user generates himself a private key \textit{p}, which is a random number $\in$ \{1, 2,\dots, \textit{n}-1\}, where \textit{n} is the group order. The corresponding public key \textit{P} is $\textit{p}\times G\bmod\ n$. \\
+In order to sign a given message \textit{m}, the user has to choose another random number $k\in \{1, 2, \dots, \textit{n}-1\}$
+, the \textit{ephemeral nonce}, and compute the \textit{Ephemeral key}, $\textit{K}= k \times G$.
+\\
+The signature consists of a pair of two integers $(r, s)$. The first is computed as the first coordinate of the Ephemeral
+key; while the second integer, $s$, is 
+computed as: 
+\begin{equation}
+\label{eqn:s}
+s=k - h \times p\bmod\ n,
+\end{equation}
+where $h=H(m||r)$ is the hash value of the concatenation of the message and the first coordinate of the ephemeral key. \\
+The pair $(r,s)$ is published as the signature.
+
+A proceeds as follow to generate the EC-Schnorr signature $(r, s)$ on the message $m$.\\
+\\
+\textbf{Inputs:} The following informations are required as inputs.
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+\begin{enumerate}
+	\item A's private key  \textit{$p_{A}$} and the elliptic curve domain parameters\\ \textit{(p, a , b, G, n, h)}.
+	\item The message \textit{m} to be signed.\\
+\end{enumerate}
+\end{minipage}
+
+
+\textbf{Actions:} The following actions are performed:
+
+\hspace{1.2cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item $\textit{k}=random({1, 2, \dots, n-1})$
+		\item $K=k \times G$
+		\item if $K$ is odd:
+		\begin{itemize}
+		      \item[a.] $k=n-k$
+		      \item[b.] $K_{y}=p-K_{y}$
+		\end{itemize}
+		\item $r=K_{x}$
+		\item $h=H(m||r)$\\
+		If $h=0$ \ mod\ $n$ goto 1.
+		\item $s=k - h \times p \bmod\ n$ \\
+		If $s=0$ goto 1.
+	\end{enumerate}
+\end{minipage}
+
+\textbf{Output:} The EC-Schnorr signature $(r, s)$ over $m$
+
+
+\subsection{Verification}
+The verification process is very important, because through it we can be sure that the message has been signed by the owner of the private key.\\
+The protocol is simple, it consists of few steps:
+\begin{itemize}
+	\item Compute
+	\begin{equation}
+	\label{eqn:verif1}
+	 V = K - h \times P;
+	 \end{equation}
+	\item If 
+	\begin{equation}
+	\label{eqn:verif2}
+	V = s \times G,
+	\end{equation} the signature is verified!
+\end{itemize}
+
+\paragraph{Proof of correctness}
+We want to show that the verification protocol is mathematically correct.
+\begin{proof}
+	We can start analysing \eqref{eqn:verif2}. It is immediately visible that if we substitute \eqref{eqn:verif1} and \eqref{eqn:s} in it, we obtain
+	\begin{equation}
+	K - h \times P = (k - h\times p)\times G.
+	\end{equation}
+	Knowing that $K=k \times G$, 
+	\begin{equation}
+	(k - h\times p)\times G = (k - h\times p)\times G 
+	\end{equation}
+	
+\end{proof}
+
+Given a ECSSA signature $(r,s)$ over a message $m$, the verification procedure is the following: \\
+\textbf{Inputs:} The following informations are required as inputs. 
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item A's authentic public key  $P_{A}$ and the elliptic curve domain \\parameters \textit{(p, a , b G, n, h)}.
+		\item The message $m$ to be signed.
+		\item The ECSSA signature $(r,s)$.\\
+	\end{enumerate}
+\end{minipage}
+\textbf{Actions:} The following actions are performed:
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item if $s\geq order$: fail;
+		\item if $r \geq prime$ number: fail;
+		\item $h'= H(r||m)$;
+		\item if $h'=0$ or $h'\geq order$: fail;
+		\item $K'=h' \times P+s \times G$;
+		\item if $K'_{y}$ is odd: fail;
+		\item if $K'_{x} = r$ : \texttt{True}.\\
+	\end{enumerate}
+\end{minipage}
+\textbf{Output:} \texttt{True}, if the signature is valid, and \texttt{False} otherwise
+
+
+
+
+\section{Step by step analysis}
+
+We continue our dissertation analysing each step, trying to highlight the reasons behind our decisions.\\
+First of all it is very important that $k$ is always a random number, otherwise it is possible to find out the \textit{private key}.
+\begin{example}
+	Lets say that Alice wants to sign two messages, $m_{1}$ and $m_{2}$, using the same ephemeral nonce, k.\\ Everyone can see $(r_{1},s_{1})$, $(r_{2},s_{2})$, and the messages. So Bob, who wants to steal Alice's private key, is able to compute: \\
+	$h_{1}=H(m_{1}||r_{1})$ and $h_{2}=H(m_{2}||r_{2})$.\\
+	From \eqref{eqn:s}, Bob can easily trace back to $p$: 
+	\begin{equation}
+	\label{eqn:k}
+	p= \frac{s_{2}-s_{1}}{h_{2}-h_{1}} \bmod\ n\\
+	\end{equation}
+\end{example}
+
+In this simple way, everyone can find out Alice's private key and sign in lieu of her.\\
+Going on into our analysis, why do we have to hash the message? \\
+The reason behind this step has a practical nature: using a hash function $h$ we can reduce the amount of bytes; moreover, while the message can vary in its dimension, $h$ has a standard length.\\
+%In his paper, Schnorr specified that the message should be hashed together with the $Ephimeral key$; we opted for the concatenation of $m$ and the $x$ coordinate of $K$.\\
+The next step is the generation of the signature $s$. Schnorr inferred it from the ElGamal signature algorithm:
+\begin{equation}
+\label{eqn:ElGamal}
+sk=m+xK (\bmod\ p-1),
+\end{equation}
+where $x$ is the \textit{private key}, $K$ is the $ephemeral\ key$ and the $k$ is the $ephemeral$ $nonce$.\\
+Replacing $K$ by $h=H(m,K)$, $m$ can be eliminated. Another semplification comes from the replacements of $sk$ and $p-1$, respectively, by $s-k$ and the prime number $q$. This transforms \eqref{eqn:ElGamal} into:
+\begin{equation}
+s=k+hp (\bmod\ q),
+\end{equation}
+obtaining a much shorter signature.\\
+This one is slightly different from the \eqref{eqn:s}, there is $-p$ in place of $p$. It would not be a problem except that, in this case, you should compute the $public\ key$ as $-p \times G$ instead of $p \times G$; but they require basically the same computational effort.\\
+We now have understood why to hash the message, but why do we introduce the concatenation of message and $x$ coordinate of the \textit{ephemeral key}?\\
+The reason is strictly linked to the most important property of this signature: \textit{linearity}.\\
+As we will explain in the next section and in the next chapter, Schnorr signature is additive, so the signature of the sum is the sum of the signatures. This brings to amazing benefits, such as supporting naive multisignature, but it has some downside: Schnorr signature does not natively commit to the public key, which means that somebody can sign something using your key without knowing your private key. 
+\begin{example}
+	Let's say that Alice signs a transaction $T_{1}$ in Bitcoin system. Here, she computes her \textit{ephimeral nonce} $k_{1}$ deterministically. \footnote{Currently in Bitcoin, $k$ is generated through RFC6979 and it depends on $T$ and $p$.}
+	$K_{1}=k_{1}\times G$, if $h_{1}=H(T_{1})$, then $s_{1}=k_{1}-p_{1}h_{1}$, so the signature is $(K_{1_{x}},s_{1})$.\\
+	Now, Bob wants to sign the transaction $T_{2}$ ($h_{2}=H(T_{2})$) and is able to find out $k_{1}$, so
+	\begin{equation*}
+	h_{1}p_{1}=k_{1}-s_{1}.
+	\end{equation*}
+	He can decide that his private key is $p_{2}=\frac{p_{1}h_{1}}{h_{2}}$,
+	\begin{equation*}
+	s_{2}=k_{1}-h_{2}p_{2}	
+	\end{equation*}
+	$\implies s_{2}=k_{1}-p_{1}h_{1}=s_{1}$.\\
+	In this way, Bob has obtained a valid signature $(K_{2_{x}},s_{2})$ identical to Alice's one and they are absolutely valid!
+\end{example}
+
+The last step is the output of the algorithm: $(K_{x},s)$.
+Why do we use only the $x$ coordinate of the $Ephemeral\ key$ to sign the message? Why not adhere to Schnorr's paper?\\
+Indeed, he thought about a different output: $(h,s)$, which occupies three-quarters of ours' space.\\
+We chose $K_{x}$ instead of $h$ because otherwise it would not have been possible to make such an important processesas the \textit{key recovery}.
+
+\begin{teorema}[\textbf{Key Recovery}]
+	The Key recovery is the process through which is possible to trace back to a public key starting from one coordinate.
+\end{teorema}
+
+This process is very important, because it permits everyone to control the validity of the signature.\\
+We could not have used the $y$ coordinate instead of the $x$ one, because the key recovery would require a higher computational effort. Moreover, there would be three $x$ coordinates among which we should find our key recovered rather than the two $y$ coordinates.\\
+We obtain a 64-bytes signature:
+\begin{itemize}
+	\item a 32-byte integer $K_{x}$
+	\item a 32-byte integer $s$ \\
+\end{itemize}
+
+
+\begin{figure}[H]
+	\centering
+	\renewcommand{\arraystretch}{2}
+	\begin{tabular}{l|clcc}
+		\textbf{Scheme} & \textbf{Public key} & \textbf{First component} & \textbf{Second component} & \textbf{Signature size}\\
+		\hline
+		[Sc91] & $-p \times G$ & $H(m,K)$ & $k+p h$ & $b+2b$\\
+		EC-SDSA & $-p \times G$ & $H(K_{x}||K_{y}||m)$ & $k+p h$ & $2b+2b$ \\
+		EC-SDSA-opt & $-p \times G$ & $H(K_{x}||m)$ & $k+p h$ & $2b+2b$ \\
+		EC-FSDSA & $-p \times G$ & $K_{x}||K_{y}$ & $k+p h$ & $4b+2b$ \\
+		EC-Schnorr & $p \times G$ & $H(K_{x}||m)$ & $k-p h$ & $2b+2b$ \\
+		\rowcolor{yellow}
+		EC-SSA & $p \times G$ & $K_{x}$ & $k-p h$ & $2b+2b$ \\
+	\end{tabular}
+	\caption{Characteristics of the proposed schemes.}
+	\label{tabsig}
+\end{figure}
+
+In the table above are reported the different schemes among which we chose ours.\\
+$[$Sc91$]$ is the one that most conforms to Schnorr's paper, and has the lowest signature's size: $b+2b$.\\
+The following three schemes are an alteration of the EC-DSA, which is the current signature algorithm that is used by Bitcoin. (We will discuss about it in the fifth chapter.)\\
+We rejected the first five ides because the first component does not allow the key recovery. In particular, the concatenation of the coordinates of the \textit{Ephemeral key} can be either a component of a point over the eliptic curve or not, so it is unusable; while the other schemes have an hash value as firts component, so no one besides \textit{ECSSA} supports the key recovery.\\
+Moreover, EC-FSDSA has a very big signature.\\
+So, currently the best possible scheme is EC-SSA.
+\section{Benefits}
+
+Here we want to highlight some feature of this signature. \\
+The main reason behind the hype around Schnorr signature is the \textbf{additivity}. \\
+What is it? And what does it involve?\\
+This allows us to sum up two signatures creating just one valid signature.\\
+Consequently, it brings to Multisignature, which we will thoroughly discuss in the following chapter.\\
+
+%Examining our algorithm in depth, it is visible that excluding 
+
+The \textit{non-malleability} is another important feature of this signature.
+
+\begin{teorema}
+	A signature scheme is malleable — alternatively, homomorphic— if, given a signature s on a message m, one can efficiently derive a signature s' on a message m' = T(m) for an allowed transformation T.
+\end{teorema}
+
+Consequently, if a signature scheme is non-malleable, a third party that does not have access to private key can not modify the signature without invalidating it.
+
+Another important benefit of our choice is the possibility to implement \textit{Batch validation}.
+\begin{teorema}[\textbf{Batch validation of signatures}]
+	Let l be the security parameter. Suppose (Gen,Sign,Verify) is a signature scheme, $k, n \in poly(l)$, and $(pk_{1},sk_{1}), \dots, (pk_{n},sk_{n})$ are generated indipendently according to Gen($1^{l}$). Let PK=${pk_{1},\dots,pk_{n}}$. Then we call Batch a batch verification algorithm when the following conditions hold:
+	\begin{itemize}
+		\item If $pk_{t_{i}} \in PK$ and Verify($pk_{t_{i}},m_{i},\sigma_{i}$)=1 for all $i \in [1 \dots n]$, then Batch($(pk_{t_{1}},m_{1},\sigma_{1}),\dots, (pk_{t_{n}},m_{n},\sigma_{n})$)=1.
+		\item If $pk_{t_{i}} \in PK$ and Verify($pk_{t_{i}},m_{i},\sigma_{i}$)=0 for some $i \in [1 \dots n]$, then Batch($(pk_{t_{1}},m_{1},\sigma_{1}),\dots, (pk_{t_{n}},m_{n},\sigma_{n})$)=0.
+	\end{itemize}
+\end{teorema}
+The idea behind Batch validation is that you can have multiple sets of combinations of keys and messages and you can verify them all at once.
+
+
+%non-malleability
+%security proof
+
+
+\noindent 

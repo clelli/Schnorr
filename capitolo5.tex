@@ -1,0 +1,177 @@
+\chapter{DSA vs SSA}
+\label{capitolo5}
+
+In this chapter, we introduce the Digital Signature Algorithm, which is the current signature used in Bitcoin. \\
+We analyze the algorithm and we compare it with Schnorr Signature Algorithm.
+
+
+
+\section{Digital Signature Algorithm}
+Proposed in August 1991 by the U.S. National Institute of Standards and Technology (NIST) and become a U.S Federal Information Processing Standard in 1993, DSA was the first signature scheme  accepted legally by the U.S. government \cite{ECDSA}.\\
+Particularly interesting is the application of DSA to Elliptic Curve Cryptography: ECDSA.\\
+ECDSA works in the group of elliptic curve $E(Z_{p})$. In the early 00s it has been standardized by many standard committees such as ISO, ANSI, IEEE and FIPS. So, when Satoshy Nakamoto had to decide which standardized signature algorithm to adopt in Bitcoin, ECDSA was the best in circulation. In facts, it has some downsides that, as we are going to show you, could be solved adopting ECSSA.
+\subsection{Scheme}
+Given an elliptic curve over a finite field $\mathbb{F} _{p}$, a user generates himself a private key \textit{p}, which is a random number $\in$ \{1, 2,\dots, \textit{n}-1\}, where \textit{n} is the group order. The corresponding public key \textit{P} is $\textit{p}\times G\bmod\ n$. \\
+In order to sign a given message \textit{m}, the user has to choose another random number \textit{k}%$\in$ \{1, 2, \dots, \textit{n}-1\}
+, the \textit{ephemeral nounce}, and compute the \textit{Ephemeral key}, $\textit{K}= k \times G$.
+\\
+The signature consists of a pair of two integers $(x_{K}, s)$. The first is computed as the first coordinate of the Ephemeral
+key; while the second integer, s, is computed as: 
+\begin{equation}
+\label{eqn:s2}
+s=(h - x_{K} \times p) k^{-1}\bmod\ n
+\end{equation}
+where $h=H(m)$ is the hash value of the message. \\
+The pair $(x_{K},s)$ is published as the signature.\\
+
+A proceeds as follow to generate the ECDSA signature $(x_{K}, s)$ on the message \textit{m}.\\
+\\
+\textbf{Inputs:} The following informations are required as inputs.
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item A's private key  \textit{$p_{A}$} and the elliptic curve domain parameters\\ \textit{(p, a , b, G, n, h)}.
+		\item The message \textit{m} to be signed.\\
+	\end{enumerate}
+\end{minipage}
+
+
+\textbf{Actions:} The following actions are performed:
+
+\hspace{1.2cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item $\textit{k}=random({1, 2, \dots, n-1})$
+		\item $K=k \times G$
+		%\item $x_{K}=K_{x} \bmod\ n$
+		\item $h=H(m)$\\
+		If $h=0$ \ mod\ $n$ goto 1.
+		\item $s=(h+x_{K}\times p)k^{-1}\bmod\ n$ \\
+		If $s=0$ goto 1.
+	\end{enumerate}
+\end{minipage}
+
+\textbf{Output:} The ECDSA signature $(x_{K}, s)$ over $m$
+
+
+\subsection{Verification}
+The verification process is very important, because through it we can be sure that the message has been signed by the owner of the private key.\\
+The protocol consists of the following steps:
+\begin{itemize}
+	\item Compute:
+	\begin{enumerate}
+		\item \begin{equation}
+			  \label{eqn:verifDSA1}
+			  u = hs^{-1} \bmod\ n
+			  \end{equation}
+		\item \begin{equation}
+			  \label{eqn:verifDSA2}
+			  v = x_{K}s^{-1} \bmod\ n
+			  \end{equation}
+		\item \begin{equation}
+			  \label{eqn:verifDSA3}
+			  (x,y)=u\times G+ v\times P
+			  \end{equation}
+	 \end{enumerate}
+ 	\item If:
+ 	\begin{equation}
+ 	\label{eqn:verifDSA4}
+ 	x=x_{K}\bmod\ n
+ 	\end{equation} the signature is verified!
+\end{itemize}
+
+\paragraph{Proof of correctness}
+We want to show that the verification protocol is mathematically correct.
+\begin{proof}
+	We can start noticing that \eqref{eqn:verifDSA4} is true if 
+	\begin{equation}
+	u\times G+ v\times P=K
+	\end{equation}
+	Since $P$ is the public key and $K$ is the ephemeral key:
+	\begin{equation}
+	(u+vp)\times G= k\times G
+	\end{equation}
+	Considering \eqref{eqn:verifDSA1} and \eqref{eqn:verifDSA2},
+	\begin{equation}
+	(hs^{-1}+x_{K}s^{-1}p)\times G= k\times G
+	\end{equation}
+	\begin{equation}
+	(h+x_{K}p)s^{-1}\times G= k\times G
+	\end{equation}
+	Since $s$ is the signature,
+	\begin{equation}
+	(h+x_{K}p)(h+x_{K}p)^{-1}k\times G= k\times G
+	\end{equation}
+	$\implies k\times G=k\times G$ identity.
+\end{proof}
+
+Given a ECDSA signature $(x_{K},s)$ over a message $m$, the verification procedure is the following: \\
+\textbf{Inputs:} The following informations are required as inputs. 
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item A's authentic public key  \textit{$P$} and the elliptic curve domain \\parameters \textit{(p, a , b G, n, h)}.
+		\item The message \textit{m} to be signed.
+		\item The ECDSA signature $(x_{K},s)$.\\
+	\end{enumerate}
+\end{minipage}
+\textbf{Actions:} The following actions are performed:
+
+\hspace{1.1cm}
+\begin{minipage}[l]{2\linewidth}
+	\begin{enumerate}
+		\item if $s\geq order$: fail;
+		\item if $x_{K} \geq prime$ number: fail;
+		\item $v=x_{K}s^{-1} \bmod\ n$;
+		\item $h'= H(m)$;
+		\item if $h'\neq 0$ or $h'<order$:
+		\begin{itemize}
+			\item $u=h' s^{-1} \bmod\ n$;
+			\item $(K'=u\times G + v\times P) \bmod\ n$;
+		\end{itemize}
+		\item else:
+		\begin{itemize}
+			\item $K'=v$
+		\end{itemize}
+		\item if $K'_{x} = x_{K}$ : \texttt{True}.\\
+	\end{enumerate}
+\end{minipage}
+\textbf{Output:} \texttt{True}, if the signature is valid, and \texttt{False} otherwise
+
+
+\section{Comparison}
+Here we want to compare the scheme we propose to the one currently used in Bitcoin: ECSSA vs ECDSA.\\
+We can start analysing \eqref{eqn:s} and \eqref{eqn:s2}, the generation of $s$:\\
+they are both quite simple, the second requires a little bit more effort because it uses the multiplication by the inverse of $k$; anyway, the signature is a couple of integer. They differ in the use of the hash function:\\
+in Schnorr, as we have demonstrated in \textit{Chapter \eqref{capitolo3}}, it must be $h=H(m||K_{x})$; while in ECDSA, it can easily be $h=H(m)$. This is because of the linearity, a property that the latter does not have. ECDSA, indeed, is not additive. Why?\\
+The explanation lies in the  fact that ECDSA works with just the $x$-coordinate of the $Ephemeral\ key$, while Schnorr uses directly the points, so the latter exploits the $shifting\ property$:
+\begin{teorema}{(\textbf{Shifting Property})}
+	Let $P$ be a point on an Elliptic Curve with gerator $G$, $e$ be an integer, then:
+	\begin{equation*}
+	Q=P+e\times G
+	\end{equation*}
+	is an EC point. Moreover if $P = x \times G$ then $Q=(x+e) \times G$.
+\end{teorema}
+Operating with only one coordinate it is not possible to use this property, because:\\
+$P_{x}+G_{x}=Q_{x} \nRightarrow P+G=Q$.\\
+Looking at the left side, $Q_{x}$ could be the coordinate of an EC point, but it could also not be in the curve; we are not in a \textit{Cartesian plane}!\\
+Indeed, Schnorr signature supports multisignature, while it is not possible to implement such a scheme in DSA. So, using the former there would be a considerable save of space! (\textit{see figure \eqref{img:BlockchaiMusig}})\\
+Looking at the \textit{verification} process, in Schnorr is faster and more simple than in DSA.\\
+As we said in \textit{Chapter \eqref{capitolo3}}, SSA supports \textit{Batch Validation}, which is an amazing feature 
+DSA is malleable:\\
+if $(x_{K},s)$ is a valid signature of $h$, also $(x_{K},n-s)$, where $n$ is the $order$, is a valid signature adn everyone can use it.\\
+This cannot happen with SSA.\\
+Moreover, currently it is used the DER encoding, which adds 6 bytes in each signature, and it is composed by:
+\begin{itemize}
+	\item $0x30$ to indicate the a DER encoded signature follows
+	\item 1 byte for length of signature
+	\item $0x02$ to indicate the a integer follows
+	\item 1 byte for length of $x_{K}$
+\end{itemize}
+This means that the length of the signatures can vary. In our scheme it is not used and the length is fixed.\\
+Furthermore, there is a \textit{security proof} for Schnorr, but not for DSA.
+
+
+

@@ -1,0 +1,17 @@
+\chapter{Conclusions and Future Work}
+\label{capitolo6}
+
+
+\section{Conclusions}
+Throughout this dissertation we have analysed \textit{Schnorr Signature}, a digital signature proposed in 1989 by Schnorr, a German mathematician and cryptography. It has been particularly in the spotlight during the last few years, due to its properties, benefits and features.\\
+Firstly, we have introduced the foundations on which this signature is based, starting from \textit{modular arithmetic} and \textit{groups} and \textit{finite field theory}, continuing with \textit{Elliptic Curve theory}, concluding with \textit{hash functions} and \textit{Discrete Logarithm Problem}.\\
+Then, we have focused on the scheme of Schnorr signature $(Key-Generation,\\ Signing,\ Verification)$ applied to an Elliptic Curve and on our implementation of it, which we chose among the various proposals. We have explained in every detail our design choices, showing every benefit. Particularly interesting is the property of \textit{additivity}, which enables us to say that "the signature of the sum is the sum of the signatures".\\
+This leads us to the core of this thesis: \textit{multisignature}, an amazing feature of this signature. We have implemented its scheme and analysed it in details, concluding that it would lead to considerable benefits, for example a significant reduction of the transactions' size (see Figure \eqref{img:BlockchainMusig}).\\
+Finally, we have introduced ECDSA (\textit{Digital Signature Algorithm applied to an Elliptic Curve}) and compare the two signature schemes in order to highlight the advantages of Schnorr signature and to stress the importance of its standardisation.
+
+
+
+\section{Future Work}
+Our implementation is one of the various proposals that can be found on the internet. Of course, a signature cannot be used if there is not an unique implementation. Thus, in the foreseeable future Schnorr signature should be standardised.\\
+Bitcoin core developers are working on it, so it is conceivable that they might release their algorithm in the next few months. Probably, they will introduce it in Bitcoin system within the end of this year.\\
+As we said in Chapter 3, one of the possible features of Schnorr signature is \textit{Batch Validation}, which may have considerable beneficial effects on the validation of blocks of transactions, almost halving its time. So it will probably be implemented using Schnorr signature.\\

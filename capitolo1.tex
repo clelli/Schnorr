@@ -1,0 +1,38 @@
+\chapter{Introduction}
+\label{Introduzione}
+
+In this chapter, we illustrate a general overview of cryptography and digital signature and we present the main contribution of this work.
+\section{General overview}
+In \textit{Encyclop\ae dia Britannica\cite{EnBrit}}, Cryptography is defined as "the science of transforming information into a form that is impossible or infeasible to duplicate or undo without knowledge of a secret key". The first known evidence of the use of cryptography dates back to around 1900 BC in Egypt. We have to wait until 100 BC to see the first most famous cipher: Cesar Cipher. He used it to convey secret messages to his army generals. The key was to shift every letter by 3. The most famous example of cryptography is the cipher machine \textit{Enigma}, highly used by German forces during the Second World War.\\
+\\
+In 1976 Whitfield Diffie and Martin Hellman published "New Directions in Cryptography", introducing the idea of
+public key cryptography. In fact, \textit{symmetric cryptography} has some shortcomings. The  secret key must be established trhough a secure channel and has to be known by only two people. Thus, if A wants to communicate through this system with several people, A has to store a large number of secret keys, one for each of the counterparts. There must be mutual trust between the parts and no one should want to cheat the other.\\
+\\
+This drawbacks have been overcomed through the introduction of the \textit{public key cryptography}, also known as \textit{asymmetric cryptography}. In this type of systems, the user has a key-pair: a \textit{public key} disclosed, and a \textit{private key} known only by the user. \\
+The main uses of this system are:
+\begin{itemize}
+	\item \textit{public key encryption}: the message is encrypted using the recipient's public key and can be decrypted only by the owner of the corresponding private key.
+	\item \textit{digital signature}: in this case the message is not encrypted, but it is signed using the sender's private key and can be verified by anyone using the corresponding public key.
+\end{itemize} 
+In this thesis, we focus on a specific digital signature: \textit{Schnorr Signature}. It was proposed in 1989 by Claus Pieter Schnorr, a German mathematician and cryptographer. It was published two years later and suddenly patented.\\
+Even if it has always been known to be very simple, while other signatures such as DSA have been standardized, this has not happened to Schnorr signature because of the patent on it. Thus, when in 2005 the patent has expired, people have built on DSA rather than Schnorr signature.\\
+\\
+Actually there are some proposals for the implementation of this signature, but still no standard and no code to use it.
+\section{Contributions}
+This work provides an implementation of \textit{Schnorr Signature Algorithm} applied to Elliptic Curve Cryptography and \textit{Multisignature Protocol}. Since this signature has not been standardized yet, it is possible to find some ideas proposed by some researchers, but not a script on which the schemes are implemented. We chose to follow the guide line designed by Pieter Wuille, a very important Bitcoin Core developer. \\
+\\
+We start with an important overview of the mathematics necessary in order to deeply understand Elliptic Curve Cryptography and the assumptions on which it is based. Then we focus on \textit{Schnorr Signature}, starting from the analysis of the idea behind the algorithm, and going on presenting our implementation and explaining it step by step. A key point in our dissertation is the analysis of the benefits of SSA, among which the most important is: \textit{additivity}.\\ 
+\\
+This property is the basis of \textit{multisignature}, the main core of this dissertation. It is a protocol through which a group of signers can generate a single joint signature on a common message. We illustrate our implementation of this feature and we analyse it step by step.\\
+\\
+Finally, we present the Digital Signature Algorithm applied to an Elliptic Curve and compare it to ECSSA. We conclude explaining in details why ECSSA should replace ECDSA.
+
+\section{Structure of the thesis} 
+This work is organized as follows.
+\begin{description}
+	\item[Chapter 2] introduces the problem in mathemathical terms and it gives the necessary definitions on which we base our work.
+	\item[Chapter 3] illustrates Schnorr Signature. Our algorithm is presented and analysed
+	\item[Chapter 4] presents the most important feature of SSA: Multisignature. In this chapter, we show our implementation explaining it in every detail.
+	\item[Chapter 5] illustrates the Digital Signature Algorithm and compares it to SSA 
+	\item[Chapter 6] concludes the discussion with a summary of the results and suggests some possible future developments of this work.
+\end{description}
