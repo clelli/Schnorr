@@ -9,11 +9,11 @@ We analyze the algorithm and we compare it with Schnorr Signature Algorithm.
 \section{Digital Signature Algorithm}
 Proposed in August 1991 by the U.S. National Institute of Standards and Technology (NIST) and become a U.S Federal Information Processing Standard in 1993, DSA was the first signature scheme  accepted legally by the U.S. government \cite{ECDSA}.\\
 Particularly interesting is the application of DSA to Elliptic Curve Cryptography: ECDSA.\\
-ECDSA works in the group of elliptic curve $E(Z_{p})$. In the early 00s it has been standardized by many standard committees such as ISO, ANSI, IEEE and FIPS. So, when Satoshy Nakamoto had to decide which standardized signature algorithm to adopt in Bitcoin, ECDSA was the best in circulation. In facts, it has some downsides that, as we are going to show you, could be solved adopting ECSSA.
+ECDSA works in the group of elliptic curve $E(\mathbb{Z}_{P})$. In the early 00s it has been standardized by many standard committees such as ISO, ANSI, IEEE and FIPS. So, when Satoshy Nakamoto decided which standardized signature algorithm to adopt in Bitcoin, ECDSA was the best in circulation. In facts, it has some downsides that, as we are going to show you, could be solved adopting ECSSA.
 \subsection{Scheme}
 Given an elliptic curve over a finite field $\mathbb{F} _{p}$, a user generates himself a private key \textit{p}, which is a random number $\in$ \{1, 2,\dots, \textit{n}-1\}, where \textit{n} is the group order. The corresponding public key \textit{P} is $\textit{p}\times G\bmod\ n$. \\
 In order to sign a given message \textit{m}, the user has to choose another random number \textit{k}%$\in$ \{1, 2, \dots, \textit{n}-1\}
-, the \textit{ephemeral nounce}, and compute the \textit{Ephemeral key}, $\textit{K}= k \times G$.
+, the \textit{ephemeral private key}, and compute the \textit{Ephemeral public key}, $\textit{K}= k \times G$.
 \\
 The signature consists of a pair of two integers $(x_{K}, s)$. The first is computed as the first coordinate of the Ephemeral
 key; while the second integer, s, is computed as: 
@@ -31,7 +31,7 @@ A proceeds as follow to generate the ECDSA signature $(x_{K}, s)$ on the message
 \hspace{1.1cm}
 \begin{minipage}[l]{2\linewidth}
 	\begin{enumerate}
-		\item A's private key  \textit{$p_{A}$} and the elliptic curve domain parameters\\ \textit{(p, a , b, G, n, h)}.
+		\item A's private key  \textit{$p_{A}$} and the elliptic curve domain parameters\\ \textit{($\overline{p}$, a , b, G, n, h)}.
 		\item The message \textit{m} to be signed.\\
 	\end{enumerate}
 \end{minipage}
@@ -44,7 +44,7 @@ A proceeds as follow to generate the ECDSA signature $(x_{K}, s)$ on the message
 	\begin{enumerate}
 		\item $\textit{k}=random({1, 2, \dots, n-1})$
 		\item $K=k \times G$
-		%\item $x_{K}=K_{x} \bmod\ n$
+		\item $x_{K}=K_{x} \bmod\ n$
 		\item $h=H(m)$\\
 		If $h=0$ \ mod\ $n$ goto 1.
 		\item $s=(h+x_{K}\times p)k^{-1}\bmod\ n$ \\
@@ -112,7 +112,7 @@ Given a ECDSA signature $(x_{K},s)$ over a message $m$, the verification procedu
 \hspace{1.1cm}
 \begin{minipage}[l]{2\linewidth}
 	\begin{enumerate}
-		\item A's authentic public key  \textit{$P$} and the elliptic curve domain \\parameters \textit{(p, a , b G, n, h)}.
+		\item A's authentic public key  \textit{$P$} and the elliptic curve domain \\parameters \textit{($\overline{p}$, a , b G, n, h)}.
 		\item The message \textit{m} to be signed.
 		\item The ECDSA signature $(x_{K},s)$.\\
 	\end{enumerate}
@@ -122,20 +122,16 @@ Given a ECDSA signature $(x_{K},s)$ over a message $m$, the verification procedu
 \hspace{1.1cm}
 \begin{minipage}[l]{2\linewidth}
 	\begin{enumerate}
-		\item if $s\geq order$: fail;
-		\item if $x_{K} \geq prime$ number: fail;
+		\item if $s\geq n$: \texttt{False};
 		\item $v=x_{K}s^{-1} \bmod\ n$;
 		\item $h'= H(m)$;
-		\item if $h'\neq 0$ or $h'<order$:
+		\item if $h'\neq 0$ or $h'<n$:
 		\begin{itemize}
 			\item $u=h' s^{-1} \bmod\ n$;
 			\item $(K'=u\times G + v\times P) \bmod\ n$;
 		\end{itemize}
-		\item else:
-		\begin{itemize}
-			\item $K'=v$
-		\end{itemize}
 		\item if $K'_{x} = x_{K}$ : \texttt{True}.\\
+		Else: \texttt{False}.\\
 	\end{enumerate}
 \end{minipage}
 \textbf{Output:} \texttt{True}, if the signature is valid, and \texttt{False} otherwise
@@ -157,15 +153,17 @@ The explanation lies in the  fact that ECDSA works with just the $x$-coordinate 
 Operating with only one coordinate it is not possible to use this property, because:\\
 $P_{x}+G_{x}=Q_{x} \nRightarrow P+G=Q$.\\
 Looking at the left side, $Q_{x}$ could be the coordinate of an EC point, but it could also not be in the curve: we are not in a \textit{Cartesian plane}!\\
-Indeed, Schnorr signature supports multisignature, while it is not possible to implement such a scheme in DSA. So, using the former there would be a considerable save of space! (\textit{see figure \eqref{img:BlockchainMusig}})\\
-Moreover, currently it is used the DER encoding, which adds 6 bytes in each signature, and it is composed by:
+Indeed, Schnorr signature supports native multisignature, while it is not possible to implement such a scheme in DSA. Actually, multisignature implies the use of $N$ different signatures. Thus, using the former there would be a considerable save of space! (\textit{see figure \eqref{img:BlockchainMusig}})\\
+\\
+Currently, Bitcoin system uses an operator to check the signatures, OP\_CHECKSIG, which requires DER encoding. This adds 6 bytes in each signature, and it is composed by:
 \begin{itemize}
 	\item $0x30$ to indicate the a DER encoded signature follows
 	\item 1 byte for length of signature
 	\item $0x02$ to indicate the a integer follows
 	\item 1 byte for length of $x_{K}$
 \end{itemize}
-This means that the length of the signatures can vary. In our scheme it is not used and the length is fixed.\\
+The integration of Schnorr signature could bring to the use of a new operator which does not require DER encoding.\\
+%This means that the length of the signatures can vary. In our scheme it is not used and the length is fixed.\\
 Schnorr signature saves up not only space, but also time.
 Looking at the \textit{verification} process, indeed, in Schnorr is faster and simpler than in DSA. 
 In this contex, it is important to remind what we said in \textit{Chapter \eqref{capitolo3}}, which is that SSA supports \textit{Batch Validation}. It is an amazing feature, because it permits to verify at the same time a set of signatures all together.\\
