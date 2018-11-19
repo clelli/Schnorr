@@ -1,0 +1,87 @@
+\begin{thebibliography}{10}
+
+\bibitem{BitcoinCore}
+Bitcoin core.
+\newblock \url{https://bitcoincore.org}.
+
+\bibitem{CriptExchange}
+Crypto stackexchange.
+\newblock \url{https://crypto.stackexchange.com}.
+
+\bibitem{EnBrit}
+Encyclop\ae dya britannica.
+\newblock \url{https://www.britannica.com}.
+
+\bibitem{History1}
+Inquiers journal.
+\newblock \url{http://www.inquiriesjournal.com}.
+
+\bibitem{wiki}
+Wikipedia.
+\newblock \url{https://en.wikipedia.org}.
+
+\bibitem{ECC}
+{\em Elliptic Curve Cryptography}.
+\newblock Bundesamt fur Sicherheit in der Informationstechnik, 2007.
+
+\bibitem{graf}
+Andre corbellini.
+\newblock \url{http://andrea.corbellini.name}, 2015.
+
+\bibitem{NovAdd}
+Greg Friedman.
+\newblock Novikov additivity.
+\newblock Department of Mathematics, Texas Christian University, Fort Worth,
+  Texas 76129, USA, 2009.
+
+\bibitem{ECDSA}
+Don~B. Johnson and Alfred~J. Menezes.
+\newblock {\em Elliptic Curve DSA (ECDSA): An Enhanced DSA}.
+\newblock 1998.
+
+\bibitem{Koblitz}
+Neal Koblitz.
+\newblock {\em A Course in Number Theory and Cryptography}.
+\newblock Springer-Verlag, 1987.
+
+\bibitem{MuSig}
+Gregory Maxwell, Andrew Poelstra, Yannick Seurin, and Pieter Wuille.
+\newblock Simple schnorr multi-signatures with applications to bitcoin.
+\newblock 2018.
+
+\bibitem{MOR}
+Kazuo Micali, Silvio~Ohta and Leonid Reyzin.
+\newblock Accountable-subgroup multisignatures.
+\newblock page 245–254. ACM Conference on Computer and Communications
+  Security - CCS 2001, Michael K. Reiter and Pierangela Samarati, editors,
+  2001.
+
+\bibitem{Miller}
+Victor~S. Miller.
+\newblock {\em Use of Elliptic Curves in Cryptography}.
+\newblock Springer-Verlag, 1986.
+
+\bibitem{Nakamoto}
+Satoshi Nakamoto.
+\newblock Bitcoin: A peer-to-peer electronic cash system.
+\newblock \url{http://bitcoin.org/bitcoin.pdf}, 2008.
+
+\bibitem{UndCrypt}
+Jan Paar, Christof~Pelzl.
+\newblock {\em Understanding Cryptography}.
+\newblock Springer, 2010.
+
+\bibitem{RY}
+Thomas Ristenpart and Scott Yilek.
+\newblock {\em The Power of Proofs-of-Possession: Securing Multiparty
+  Signatures against Rogue-Key Attacks}.
+\newblock Moni Naor, editor, Advances in Cryptology - EUROCRYPT 2007, volume
+  4515 of LNCS, pages 228–245, 2007.
+
+\bibitem{Schnorr}
+Claus~Pieter Schnorr.
+\newblock {\em Efficient Signature Generation by Smart Cards}, volume 4(3),
+  page 161–174.
+\newblock J. Cryptology, 1991.
+
+\end{thebibliography}
